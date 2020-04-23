@@ -68,6 +68,8 @@ csv2json()
         if (DepartmetnUserRelation === undefined) {
             await departmentRepo.createQueryBuilder().relation(Department, "User").of(department_entity!.Did).add(user_entity!.email)
         }
+
+        
         
     }
 })

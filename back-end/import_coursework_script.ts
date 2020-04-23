@@ -27,7 +27,7 @@ csv2json()
         const course1 = await courseRepo.findOneCourseByNameAndSection(course1_name, course1_section)
 
         const coursework1_type = CourseworkType.Homework
-        const coursework1_name = obj["Course 1 HW_No"]
+        const coursework1_name = parseInt(obj["Course 1 HW_No"]).toString()
         const coursework1_user_email = student_email
         var coursework1: Coursework | undefined
 
