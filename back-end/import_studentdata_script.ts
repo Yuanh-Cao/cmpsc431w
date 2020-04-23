@@ -15,12 +15,9 @@ csv2json()
     const courseRepo = getCourseRepository()
     const userRepo = getUserRepository()
     const departmentRepo = getDepartmentRepository()
-    const courseworkRepo = getCourseworkRepository()
 
     for (var obj of jsonObj) {
-
-        // console.log(obj["Course 1 Section"])
-        // parseInt("1") => 1
+        const Did = obj["Major"]
         const course1Section = parseInt(obj["Course 1 Section"])
         const course1Exist = await courseRepo.courseExist(obj["Courses 1"], course1Section)
 
@@ -33,7 +30,6 @@ csv2json()
 
             })
             await courseRepo.insert(courseObj)
-
         }
 
         const course2Section = parseInt(obj["Course 2 Section"])
@@ -45,10 +41,8 @@ csv2json()
                 description: obj["Course 2 Details"] + ": " + obj["Course 2 Name"],
                 section: obj["Course 2 Section"],
                 limit: obj["Course 2 Section Limit"]
-
             })
             await courseRepo.insert(courseObj)
-
         }
 
         const course3Section = parseInt(obj["Course 3 Section"])
@@ -60,13 +54,13 @@ csv2json()
                 description: obj["Course 3 Details"] + ": " + obj["Course 3 Name"],
                 section: obj["Course 3 Section"],
                 limit: obj["Course 3 Section Limit"]
-
             })
             await courseRepo.insert(courseObj)
         }
         
-        const userObj = userRepo.create({
-            email: obj["Email"],
+        const studentEmail = obj["Email"]
+        const studentObj = userRepo.create({
+            email: studentEmail,
             name: obj["Full Name"],
             password: obj["Password"],
             age: obj["Age"],
@@ -81,20 +75,15 @@ csv2json()
             isTA: obj["Teaching Team ID"] === "" ? false : true
         })
 
-        await userRepo.save(userObj)
-
-
-        var user_entity = await userRepo.findOneUser(obj["Email"])
-        const departmentRepo = getDepartmentRepository()
-        var department_entity = await departmentRepo.findOneDepartment(obj["Major"])
-        
-
+        await userRepo.save(studentObj)
+    
+        // Add Department Student relation
         const DepartmetnUserRelation = await departmentRepo.createQueryBuilder("department")
         .leftJoinAndSelect("department.User", "user")
-        .where("user.email = :email", {pid: user_entity!.email}).getOne()
+        .where("user.email = :email", {email: studentObj!.email}).getOne()
         
         if (DepartmetnUserRelation === undefined) {
-            await departmentRepo.createQueryBuilder().relation(Department, "User").of(department_entity!.Did).add(user_entity!.email)
+            await departmentRepo.createQueryBuilder().relation(Department, "User").of(Did).add(studentEmail)
         }
 
     }

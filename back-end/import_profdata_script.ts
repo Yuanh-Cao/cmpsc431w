@@ -15,16 +15,11 @@ csv2json()
     const departmentRepo = getDepartmentRepository()
 
     for (var obj of jsonObj) {
-        const departmentObj = departmentRepo.create({
-            Did: obj["Department"],
-            Dname: obj["Department Name"]
-        })
+        const Did = obj["Department"]
+        const ProfessorEmail = obj["Email"]
 
-        await departmentRepo.save(departmentObj)
-
-
-        const userObj = userRepo.create({
-            email: obj["Email"],
+        const professorObj = userRepo.create({
+            email: ProfessorEmail,
             name: obj["Name"],
             password: obj["Password"],
             age: obj["Age"],
@@ -34,42 +29,37 @@ csv2json()
             role: UserRole.Professor,            
         })
 
-        await userRepo.save(userObj)
+        await userRepo.save(professorObj)
 
         var course_entities = await courseRepo.findAllCoursesByName(obj["Teaching"])
 
-        for (var course_entity of course_entities) {
-            if (course_entity === undefined) {
-                course_entity = courseRepo.create({
-                    name: obj["Teaching"]
-                })
-                await courseRepo.save(course_entity)
-            }
-    
+        if (course_entities.length === 0) {
+            let newCourse = courseRepo.create({
+                name: obj["Teaching"]
+            })
+            await courseRepo.save(newCourse)
+            course_entities = [newCourse]
+        }
+
+        // Add department course relation
+        for (var course_entity of course_entities) {    
             const DepartmetnCourseRelation = await departmentRepo.createQueryBuilder("department")
             .leftJoinAndSelect("department.Courses", "course")
             .where("course.id = :cid", {cid: course_entity!.id}).getOne()
     
             if (DepartmetnCourseRelation === undefined) {
-                await departmentRepo.createQueryBuilder().relation(Department, "Courses").of(departmentObj.Did).add(course_entity!.id)
+                await departmentRepo.createQueryBuilder().relation(Department, "Courses").of(Did).add(course_entity!.id)
             }
         }
-
-
-        var user_entity = await userRepo.findOneUser(obj["Email"])
-        // const departmentRepo = getDepartmentRepository()
-        var department_entity = await departmentRepo.findOneDepartment(obj["Department"])
         
-
+        // Add department user(professor) relation
         const DepartmetnUserRelation = await departmentRepo.createQueryBuilder("department")
         .leftJoinAndSelect("department.User", "user")
-        .where("user.email = :email", {pid: user_entity!.email}).getOne()
+        .where("user.email = :email", {email: ProfessorEmail}).getOne()
         
         if (DepartmetnUserRelation === undefined) {
-            await departmentRepo.createQueryBuilder().relation(Department, "User").of(department_entity!.Did).add(user_entity!.email)
+            await departmentRepo.createQueryBuilder().relation(Department, "User").of(Did).add(ProfessorEmail)
         }
 
-        
-        
     }
 })
