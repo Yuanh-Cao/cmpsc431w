@@ -234,7 +234,13 @@ export class CourseworkRepository extends Repository<Coursework> {
         let coursework = await this.createQueryBuilder("coursework")
                 .leftJoinAndSelect("coursework.course", "course")
                 .leftJoinAndSelect("coursework.student", "student")
+                .select([
+                    "coursework.type",
+                    "coursework.name"
+                ])
                 .where("course.id = :cid", {cid: course_id})
+                .andWhere("coursework.type = :type", {type: type})
+                .andWhere("coursework.name = :name", {name: name})
                 .andWhere("student.email = :email", {email: user_email}).getOne()
 
         return coursework

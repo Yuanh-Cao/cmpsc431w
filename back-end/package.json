@@ -11,7 +11,7 @@
     "test:function": "mocha -r ts-node/register src/test/$FUNCTION.test.ts",
     "reset:db": "rm testdb.sqlite",
     "reset:proddb": "rm prod.sqlite",
-    "import": "rm prod.sqlite && ts-node import_departments_script.ts && ts-node import_studentdata_script.ts && ts-node import_profdata_script.ts && ts-node import_postdata_script.ts"
+    "import": "rm prod.sqlite && ts-node import_departments_script.ts && ts-node import_studentdata_script.ts && ts-node import_profdata_script.ts && ts-node import_postdata_script.ts && ts-node import_coursework_script.ts"
   },
   "_moduleAliases": {
     "@daos": "dist/daos",
@@ -32,6 +32,7 @@
     "mocha": "^7.1.1",
     "module-alias": "^2.2.2",
     "morgan": "^1.10.0",
+    "pug": "^2.0.4",
     "sqlite3": "^4.1.1",
     "typeorm": "^0.2.24",
     "winston": "^3.2.1"
@@ -47,6 +48,7 @@
     "@types/mocha": "^7.0.2",
     "@types/morgan": "^1.9.0",
     "@types/node": "^13.11.1",
+    "@types/pug": "^2.0.4",
     "@types/supertest": "^2.0.8",
     "find": "^0.3.0",
     "fs-extra": "^9.0.0",

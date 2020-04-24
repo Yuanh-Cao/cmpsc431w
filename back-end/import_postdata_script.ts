@@ -3,6 +3,7 @@ import { Repository, EntityRepository } from "typeorm";
 import { getPostRepository, getCourseRepository, connect, getUserRepository } from './src/dateabase-ops';
 import { Course } from './src/entities/CourseEntities';
 import { Post } from './src/entities/PostEntities';
+import { User } from './src/entities/UserEntities';
 
 csv2json()
 .fromFile('./src/database/Posts_Comments.csv')
@@ -36,6 +37,16 @@ csv2json()
                     const postContent = obj["Post 1"]
                     const newPost = await postRepo.createPost(postContent, user1_entity, courseObj)
 
+                    //Add User Post Relation
+                    const UserPostRelation = await userRepo.createQueryBuilder("user")
+                    .leftJoinAndSelect("user.posts", "post")
+                    .where("post.id = :pid", {pid: newPost!.id}).getOne()
+
+                    if (UserPostRelation === undefined) {
+                        await userRepo.createQueryBuilder().relation(User, "posts").of(user1Email).add(newPost!.id!)
+                    }
+                    // End Add User Post Relation
+
                     const commentObj = postRepo.create({
                         content: obj["Comment 1"],
                         user: user2_entity,
@@ -46,8 +57,10 @@ csv2json()
             }
 
 
-
         }
+
+
+
         for(var courseObj of coursesObj) {
             var post_entities = await postRepo.findPostsByCourse(courseObj)
            
@@ -69,6 +82,8 @@ csv2json()
                 if (CoursePostRelation === undefined) {
                     await courseRepo.createQueryBuilder().relation(Course, "posts").of(courseObj.id).add(post_entity!.id)
                 }
+
+                
             }
 
         }
