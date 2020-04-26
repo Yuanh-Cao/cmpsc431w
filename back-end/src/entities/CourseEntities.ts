@@ -134,6 +134,11 @@ export class CourseRepository extends Repository<Course> {
         return course;
     }
 
+
+    // async findCourseByPost(postif: number): Promise<Course> {
+    //     return await this.createQueryBuilder().relation(Post, "posts").of(course).loadOne()
+    // }
+
     async findPostsByCourse(course: Course): Promise<Post[]> {
         let posts = await this.find({ 
             where: { "id" : course.id },

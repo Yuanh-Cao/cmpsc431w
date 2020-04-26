@@ -176,6 +176,16 @@ export class UserRepository extends Repository<User> {
         await this.remove(user)
     }
 
+    async getCourseProfessor(course: Course): Promise<User | undefined> {
+        const result =  await this.createQueryBuilder("user").
+        leftJoinAndSelect("user.Courses", "course")
+        .where("course.id = :cid", {cid: course.id!})
+        .andWhere("user.role = :role", {role: UserRole.Professor})
+        .getOne()
+
+        return result
+    }
+
     async findLetterGradeByCourse(course: Course, user: User): Promise<LetterGrade | undefined> {
         let letterGradeRepo = getLetterGradeRepository()
         return letterGradeRepo.findOne({where: {student: user.email, course: course.id}, relations: ["student", "course"]})

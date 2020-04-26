@@ -1,8 +1,24 @@
+<h2>Welocome to NittanyPath !</h2>
 <body>
+    <a href="javascript:history.back()"><- Go Back</a>
     each post in posts
         <div>
-            <p>Post: #{post.content}</p>
-            <a href="/comment?postid=#{post.id}">Comments</a>
+            <h3>Post: #{post.content}</h3>
+            <p><a href="/comment?postid=#{post.id}&courseid=#{courseid}">View Comments</a></p>
+
+            if user.role === 'P'
+                <form action="/delete_post" method="post">
+                    <input name="courseid" value="#{courseid}" hidden="true">
+                    <input name="postid" value="#{post.id}" hidden="true">
+                    <button type="submit">Delete Post</button>
+                </form>
+                
             <p>-------------------------------------</p>
+     
         </div>
+
+    <form action="/create_post?courseid=#{courseid}" method="post">
+    <input type="post" placeholder="New Post" name="content"/>
+    <button type="submit">Post</button>
+    </form>
 </body>

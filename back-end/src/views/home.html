@@ -1,15 +1,47 @@
-<div>
-    <a href="/mycourse">My Courses</a>
-</div>
+<h2>Welocome to NittanyPath! </h2>
 
-<p>Hello, #{user.name}</p>
-<p>Name: #{user.name}</p>
-<p>Email: #{user.email}</p>
-<p>Major: #{user.major}</p>
-<p>Age: #{user.age}</p>
-<p>Phone: #{user.phone}</p>
-<p>Gender: #{user.gender}</p>
-<p>State: #{user.state}</p>
-<p>City: #{user.city}</p>
-<p>Street: #{user.street}</p>
-<p>Zipcode: #{user.zipcode}</p>
+
+if user.role === 'S'
+    <div>
+        <a href="/mycourse">My Courses</a>
+    </div>
+    if user.isTA
+        <p>TA</p>
+        <p>Hello, #{user.name}</p>
+        <p>Name: #{user.name}</p>
+        <p>Email: #{user.email}</p>
+        <p>Major: #{user.major}</p>
+        <p>Age: #{user.age}</p>
+        <p>Phone: #{user.phone}</p>
+        <p>Gender: #{user.gender}</p>
+        <p>State: #{user.state}</p>
+        <p>City: #{user.city}</p>
+        <p>Street: #{user.street}</p>
+        <p>Zipcode: #{user.zipcode}</p>
+    else
+        <p>Student</p>
+        <p>Hello, #{user.name}</p>
+        <p>Name: #{user.name}</p>
+        <p>Email: #{user.email}</p>
+        <p>Major: #{user.major}</p>
+        <p>Age: #{user.age}</p>
+        <p>Phone: #{user.phone}</p>
+        <p>Gender: #{user.gender}</p>
+        <p>State: #{user.state}</p>
+        <p>City: #{user.city}</p>
+        <p>Street: #{user.street}</p>
+        <p>Zipcode: #{user.zipcode}</p>
+else
+    <div>
+        <a href="/mycourse">Manage Courses</a>
+    </div>
+    <p>Professor </p>
+    <p>Hello, #{user.name}</p>
+    <p>Name: #{user.name}</p>
+    <p>Email: #{user.email}</p>
+    <p>Department: #{department.Dname}</p>
+    <p>Gender: #{user.gender}</p>
+    <p>Office: #{user.office}</p>
+    <p>Title: #{user.title}</p>
+
+<a href="/logout">Log Out</a>

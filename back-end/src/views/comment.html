@@ -1,8 +1,29 @@
 <body>
-    each comment in comments
+    <a href="/post?courseid=#{courseid}"><- Go Back</a>
+    <h2>Post: #{post.content}</h2>
+
+    <p>Author <strong>#{post.user.name}</strong></p>
+    <p>-------------------------------------</p>
+    <h2>Comments: </h2>
+    each comment in post.comments
         <div>
-            <p>Post: #{comment.content}</p>
-            <p>Comment: #{comment.Post.comments.content}</p>
+            <p>#{comment.content}</p>
+            <p>Author <strong>#{comment.user.name}</strong></p>
+
+            if user.role === 'P'
+                <form action="/delete_comment" method="post">
+                    <input name="postid" value="#{post.id}" hidden="true">
+                    <input name="courseid" value="#{courseid}" hidden="true">
+                    <input name="commentid" value="#{comment.id}" hidden="true">
+                    <button type="submit">Delete Comment</button>
+                </form>
+
             <p>-------------------------------------</p>
         </div>
+
+    <form action="/create_comment?courseid=#{courseid}" method="post">
+        <input name="postid" value="#{post.id}" hidden="true" />
+        <input type="comment" placeholder="New comment" name="content"/>
+        <button type="submit">Comment</button>
+        </form>
 </body>

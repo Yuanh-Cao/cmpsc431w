@@ -52,6 +52,14 @@ export interface IPost{
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
 
+    async removePostById(id: number) {
+        const post = await this.findOne(id)
+        if (post) {
+            return this.removePost(post)
+        } else {
+            return ""
+        }
+    }
     async removePost(content: Post) {
 
         await this.remove(content)
@@ -94,11 +102,33 @@ export class PostRepository extends Repository<Post> {
         .loadMany()
     }
 
+    async findOnePostByID(id: number): Promise<Post | undefined> {
+        let post = await this.findOne({
+            where: {"id" : id}
+        })
+
+        return post
+    }
+
     async findOnePostByIdWithComments(id: number): Promise<Post | undefined> {
         let post = await this.findOne({ 
             where: { "id" : id },
             relations: ["comments", "user"]
         });
+
+        if (post?.comments && post.comments.length > 0) {
+            for (var i = 0;i<post.comments.length;i++) {
+                let comment = await this.findOne({ 
+                    where: { "id" : post?.comments[i].id },
+                    relations: ["user"]
+                });
+
+                if (comment) {
+                    post.comments[i] = comment
+                }
+        
+            }
+        }
 
         return post;
     }

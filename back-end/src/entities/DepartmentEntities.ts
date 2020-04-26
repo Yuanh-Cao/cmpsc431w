@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, PrimaryColumn, OneToOne, OneToMany, ManyToMany, JoinTable, EntityRepository, Repository } from "typeorm"
 import { Users, Professor, User } from './UserEntities';
 import { Course } from './CourseEntities';
+import { getDepartmentRepository } from 'src/dateabase-ops';
 
 @Entity("Departments")
 export class Department implements IDepartment{
@@ -70,5 +71,15 @@ export class DepartmentRepository extends Repository<Department> {
         });
 
         return department;
+    }
+
+    async findOneDepartmentByUser(email: string): Promise<Department | undefined> {
+        const departmentRepo = getDepartmentRepository()
+        const Department = await departmentRepo.createQueryBuilder("department")
+        .leftJoinAndSelect("department.User", "user")
+        .where("user.email = :email", {email: email}).getOne()
+        
+        return Department
+        
     }
 }

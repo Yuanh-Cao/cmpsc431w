@@ -1,7 +1,7 @@
 import csv2json from 'csvtojson';
 import { Repository, EntityRepository } from "typeorm";
 import { getPostRepository, getCourseRepository, connect, getUserRepository, getDepartmentRepository } from './src/dateabase-ops';
-import { UserRole } from './src/entities/UserEntities';
+import { UserRole, User } from './src/entities/UserEntities';
 import { Department } from './src/entities/DepartmentEntities';
 
 
@@ -18,7 +18,7 @@ csv2json()
         const Did = obj["Department"]
         const ProfessorEmail = obj["Email"]
 
-        const professorObj = userRepo.create({
+        const professorEntity = userRepo.create({
             email: ProfessorEmail,
             name: obj["Name"],
             password: obj["Password"],
@@ -29,7 +29,8 @@ csv2json()
             role: UserRole.Professor,            
         })
 
-        await userRepo.save(professorObj)
+        await userRepo.save(professorEntity)
+
 
         var course_entities = await courseRepo.findAllCoursesByName(obj["Teaching"])
 
@@ -40,7 +41,6 @@ csv2json()
             await courseRepo.save(newCourse)
             course_entities = [newCourse]
         }
-
         // Add department course relation
         for (var course_entity of course_entities) {    
             const DepartmetnCourseRelation = await departmentRepo.createQueryBuilder("department")
@@ -50,6 +50,17 @@ csv2json()
             if (DepartmetnCourseRelation === undefined) {
                 await departmentRepo.createQueryBuilder().relation(Department, "Courses").of(Did).add(course_entity!.id)
             }
+
+            const ProfessorCourseRelation = await userRepo.createQueryBuilder("user")
+            .leftJoinAndSelect("user.Courses", "Course")
+            .where("Course.id = :cid", {cid: course_entity!.id!})
+            .andWhere("email = :email", {email: ProfessorEmail})
+            .getOne()
+            
+            if (ProfessorCourseRelation === undefined) {
+                await userRepo.createQueryBuilder().relation(User, "Courses").of(ProfessorEmail).add(course_entity!.id!)
+            }
+    
         }
         
         // Add department user(professor) relation

@@ -1,11 +1,22 @@
+<h2>Welocome to NittanyPath !</h2>
 <body>
     <div>
         <a href="/home">Home</a>
     </div>
-    each course in courses
-        <div>
-            <h5>#{course.name}</h5>
-            <a href="/course?name=#{course.name}&section=#{course.section}">Go to #{course.name}</a>
-            
-        </div>
+    if user.role === 'S'
+        <h3>My Course</h3>
+        each course in courses
+            <div>
+                <h5>#{course.name}, Section: #{course.section}</h5>
+                <a href="/course?name=#{course.name}&section=#{course.section}">Go to #{course.name}</a>
+                
+            </div>
+    else
+        <h3>Manage Course</h3>
+        each course in courses
+            <div>
+                <h5>#{course.name}, Section: #{course.section}</h5>
+                <a href="/course?name=#{course.name}&section=#{course.section}">Go to #{course.name}, Section: #{course.section}</a>
+                
+            </div>   
 </body>
