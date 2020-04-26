@@ -1,9 +1,10 @@
 <h2>Welcome to NittanyPath! </h2>
 <body>
-    <a href="javascript:history.back()"><- Go Back</a>
+    <a href="/mycourse"><- Go Back</a>
     <h2>Course Name: #{course.name}</h2>
     <p><strong>Professor:</strong> #{professor.name}</p>
     <p><strong>Professor Email:</strong> <a href="mailto:#{professor.email}">#{professor.email}</a></p>
+    <p><strong>Professor Office:</strong> #{professor.office}</p>
     <p><strong>Course Description:</strong> #{course.description}</p>
     <p><strong>Course Section:</strong> #{course.section}</p>
     <p><strong>Section Limit:</strong> #{course.limit}</p>
@@ -11,6 +12,8 @@
     <a href="/coursework?email=#{email}&courseid=#{course.id}">Courseworks</a>
     <p>     </p>
     <a href="/post?courseid=#{course.id}">Posts</a>
+    <p>     </p>
+    <a href="/dropcourse?courseid=#{course.id}">Drop #{course.name}, section #{course.section}</a>
 
     
 </body>

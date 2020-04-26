@@ -10,7 +10,7 @@ import 'express-async-errors';
 import BaseRouter from './routes';
 import logger from '@shared/Logger';
 import { getUserRepository, getCourseRepository, getCourseworkRepository, getPostRepository, getDepartmentRepository } from './dateabase-ops';
-import { userEmailPasswordCheck } from './entities/UserEntities'
+import { userEmailPasswordCheck, User } from './entities/UserEntities'
 
 import pug from 'pug';
 import { Post } from './entities/PostEntities';
@@ -75,6 +75,12 @@ app.get('/login', async (req: Request, res: Response) => {
 });
 
 app.get('/home', async (req: Request, res: Response) => {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    var day = mm + '/' + dd + '/' + yyyy;
+    console.log(day)
     const email = req.cookies.user_email
     const userRepo = getUserRepository()
     const user = await userRepo.findOneUser(email)
@@ -83,7 +89,7 @@ app.get('/home', async (req: Request, res: Response) => {
     console.log(department)
 
     const pageRenderFunction = pug.compileFile(viewsDir + "/home.html");
-    const page = pageRenderFunction({user: user, department: department})
+    const page = pageRenderFunction({user: user, department: department, day: day})
 
     res.send(page)
 })
@@ -114,8 +120,8 @@ app.get('/course', async (req: Request, res: Response) => {
     if (!course) {
         res.send("Course not exist!")
     } else {
-        const professor = await userRepo.getCourseProfessor(course)        
-
+        const professor = await userRepo.getCourseProfessor(course)      
+        console.log(professor)  
         const pageRenderFunction = pug.compileFile(viewsDir + "/course.html");
         const page = pageRenderFunction({course: course, email: email, professor: professor})
     
@@ -125,6 +131,18 @@ app.get('/course', async (req: Request, res: Response) => {
 
 })
 
+app.get('/dropcourse', async (req: Request, res: Response) => {
+    const email = req.cookies.user_email
+    const courseRepo = getCourseRepository()
+    const userRepo = getUserRepository()
+    const courseid = parseInt(req.query.courseid.toString())
+    console.log(courseid)
+    const course = await courseRepo.findOneCourse(courseid)
+    await userRepo.createQueryBuilder().relation(User, "Courses").of(email).remove(course!.id!)
+
+    res.redirect("/mycourse")
+})
+
 app.get('/coursework', async (req: Request, res: Response) => {
     const email = req.cookies.user_email
     const courseid = parseInt(req.query.courseid.toString())
@@ -132,10 +150,15 @@ app.get('/coursework', async (req: Request, res: Response) => {
     const courseworks = await courseworkRepo.findCourseworksByEmailandCourse(email, courseid)
 
     // res.json(coursework)
+    
     const pageRenderFunction = pug.compileFile(viewsDir + "/coursework.html");
     const page = pageRenderFunction({courseworks: courseworks})
 
     res.send(page)
+})
+
+app.get('/managecoursework', async (req: Request, res: Response) => {
+    
 })
 
 app.get('/post', async (req: Request, res: Response) => {
@@ -143,10 +166,12 @@ app.get('/post', async (req: Request, res: Response) => {
     const userRepo = getUserRepository()
     const user = await userRepo.findOneUser(email)
     const courseid = parseInt(req.query.courseid.toString())
+    const courseRepo = getCourseRepository()
+    const course = await courseRepo.findOneCourse(courseid)
     const postRepo = getPostRepository()
     const posts = await postRepo.findPostsByCourseId(courseid)
     const pageRenderFunction = pug.compileFile(viewsDir + "/post.html");
-    const page = pageRenderFunction({user: user, posts: posts, courseid: courseid})
+    const page = pageRenderFunction({user: user, posts: posts, courseid: courseid, course})
 
     res.send(page)
 })
@@ -177,7 +202,7 @@ app.post('/delete_comment', async (req: Request, res: Response) => {
     const postRepo = getPostRepository()
     await postRepo.removePostById(commentid)   
 
-    res.redirect(`/comment?postid=${postid}&courseid=${courseid}`)
+    res.redirect("/comment?postid=${postid}&courseid=${courseid}")
 
 })
 
@@ -204,7 +229,18 @@ app.post('/create_comment', async (req: Request, res: Response) => {
 
 
 
-app.post('/changepassword', (req: Request, res: Response) => {
+app.post('/changepassword', async (req: Request, res: Response) => {
+    const email = req.cookies.user_email
+    const userRepo = getUserRepository()
+    const user = await userRepo.findOneUser(email)
+    user!.password = req.body.password
+    await userRepo.save(user!)
+    res.clearCookie("user_email")
+    const pageRenderFunction = pug.compileFile(viewsDir + "/changepassword.html");
+    const page = pageRenderFunction({})
+    res.send(page)
+    // res.redirect("/home")
+
     
 })
 
