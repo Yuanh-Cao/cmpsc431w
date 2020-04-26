@@ -151,6 +151,12 @@ export class CourseRepository extends Repository<Course> {
         return courses;
     }
 
+    async findAllCoursesByEmail(user_email: string): Promise<Course[]>{
+        let courses = await this.createQueryBuilder().relation(User, "Courses").of(user_email).loadMany()
+
+        return courses
+    }
+
     async courseExist(name: string, section: number): Promise<boolean>{
         let course = await this.findOne({
             where:{"name": name, "section": section}
@@ -215,6 +221,17 @@ export class CourseworkRepository extends Repository<Coursework> {
         });
 
         return courseworks;
+    }
+
+    async findCourseworksByEmailandCourse(email: string, course_id: number): Promise<Coursework[]> {
+        let courseworks = await this.createQueryBuilder("coursework")
+                .leftJoinAndSelect("coursework.course", "course")
+                .leftJoinAndSelect("coursework.student", "student")
+                .where("course.id = :cid", {cid: course_id})
+                .andWhere("student.email = :email", {email: email})
+                .getMany()
+
+        return courseworks
     }
 
     async findCourseworkById(id: number) {

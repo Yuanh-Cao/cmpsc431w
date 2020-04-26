@@ -68,11 +68,11 @@ describe("Other tests", function() {
             expect(get_course_1).to.be.true
         })
 
-        after(async function() {
-            const get_course_1 = await courseRepo.findOneCourseByName(course_1_name)
-            await userRepo.removeUser(user_1)
-            await courseRepo.removeCourse(get_course_1!)
-        })
+        // after(async function() {
+        //     const get_course_1 = await courseRepo.findOneCourseByName(course_1_name)
+        //     await userRepo.removeUser(user_1)
+        //     await courseRepo.removeCourse(get_course_1!)
+        // })
     })
 
     describe("Student can check grade", function() {

@@ -85,6 +85,15 @@ export class PostRepository extends Repository<Post> {
         return await this.createQueryBuilder().relation(Course, "posts").of(course).loadMany()
     }
 
+    async findPostsByCourseId(course_id: number): Promise<Post[]> {
+        return await this.createQueryBuilder("post")
+        .leftJoin("post.user", "user")
+        .leftJoin("post.comments", "comments")
+        .relation(Course, "posts")
+        .of(course_id)
+        .loadMany()
+    }
+
     async findOnePostByIdWithComments(id: number): Promise<Post | undefined> {
         let post = await this.findOne({ 
             where: { "id" : id },
