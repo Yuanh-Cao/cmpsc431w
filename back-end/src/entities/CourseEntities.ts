@@ -97,7 +97,7 @@ export class Coursework implements ICoursework {
 export interface ICoursework {
     id?: number;
 
-    courses?: Course[];
+    course?: Course;
 
     name?: string;
 
@@ -105,7 +105,7 @@ export interface ICoursework {
 
     detail?: string;
 
-    students?: User[];
+    student?: User;
 
     grade?: number;
 }
@@ -266,6 +266,16 @@ export class CourseworkRepository extends Repository<Coursework> {
                 .andWhere("student.email = :email", {email: user_email}).getOne()
 
         return coursework
+    }
+
+    async findAllCourseworksBycourseid(courseid: number): Promise<Coursework[]>{
+        let courseworks = await this.createQueryBuilder("coursework")
+                .leftJoinAndSelect("coursework.course", "course")
+                .leftJoinAndSelect("coursework.student", "student")
+                .where("course.id = :cid", {cid: courseid})
+                .getMany()
+
+        return courseworks
     }
 
 }

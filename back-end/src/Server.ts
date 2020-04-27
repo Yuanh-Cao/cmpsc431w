@@ -123,7 +123,7 @@ app.get('/course', async (req: Request, res: Response) => {
         const professor = await userRepo.getCourseProfessor(course)      
         console.log(professor)  
         const pageRenderFunction = pug.compileFile(viewsDir + "/course.html");
-        const page = pageRenderFunction({course: course, email: email, professor: professor})
+        const page = pageRenderFunction({course: course, email: email, user: professor})
     
         res.send(page)
     }
@@ -145,6 +145,8 @@ app.get('/dropcourse', async (req: Request, res: Response) => {
 
 app.get('/coursework', async (req: Request, res: Response) => {
     const email = req.cookies.user_email
+    const userRepo = getUserRepository()
+    const user = await userRepo.findOneUser(email)
     const courseid = parseInt(req.query.courseid.toString())
     const courseworkRepo = getCourseworkRepository()
     const courseworks = await courseworkRepo.findCourseworksByEmailandCourse(email, courseid)
@@ -152,13 +154,38 @@ app.get('/coursework', async (req: Request, res: Response) => {
     // res.json(coursework)
     
     const pageRenderFunction = pug.compileFile(viewsDir + "/coursework.html");
-    const page = pageRenderFunction({courseworks: courseworks})
+    const page = pageRenderFunction({courseworks: courseworks, user: user})
 
     res.send(page)
 })
 
 app.get('/managecoursework', async (req: Request, res: Response) => {
+    const email = req.cookies.user_email
+    const userRepo = getUserRepository()
+    const user = await userRepo.findOneUser(email)
+    const courseid = parseInt(req.query.courseid.toString())
+    const courseRepo = getCourseRepository()
+    const course = await courseRepo.findOneCourse(courseid)
+    const courseworkRepo = getCourseworkRepository()
+    const allcourseworks = await courseworkRepo.findAllCourseworksBycourseid(courseid)
+    console.log(allcourseworks)
     
+    const pageRenderFunction = pug.compileFile(viewsDir + "/coursework.html");
+    const page = pageRenderFunction({courseworks: allcourseworks, user: user, course: course})
+
+    res.send(page)
+})
+
+app.post('/gradecoursework', async (req: Request, res: Response) => {
+    const courseworkid = parseInt(req.query.courseworkid.toString())
+    const courseid = parseInt(req.query.courseid.toString())
+    const courseworkRepo = getCourseworkRepository()
+    const coursework = await courseworkRepo.findCourseworkById(courseworkid)
+    coursework!.grade = req.body.grade
+    await courseworkRepo.save(coursework!)
+
+    res.redirect("/managecoursework?courseid="+ courseid)
+
 })
 
 app.get('/post', async (req: Request, res: Response) => {
@@ -202,7 +229,7 @@ app.post('/delete_comment', async (req: Request, res: Response) => {
     const postRepo = getPostRepository()
     await postRepo.removePostById(commentid)   
 
-    res.redirect("/comment?postid=${postid}&courseid=${courseid}")
+    res.redirect("/comment?postid="+postid+"&courseid="+commentid)
 
 })
 

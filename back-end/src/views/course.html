@@ -1,19 +1,34 @@
 <h2>Welcome to NittanyPath! </h2>
-<body>
-    <a href="/mycourse"><- Go Back</a>
-    <h2>Course Name: #{course.name}</h2>
-    <p><strong>Professor:</strong> #{professor.name}</p>
-    <p><strong>Professor Email:</strong> <a href="mailto:#{professor.email}">#{professor.email}</a></p>
-    <p><strong>Professor Office:</strong> #{professor.office}</p>
-    <p><strong>Course Description:</strong> #{course.description}</p>
-    <p><strong>Course Section:</strong> #{course.section}</p>
-    <p><strong>Section Limit:</strong> #{course.limit}</p>
-    <p><strong>Drop Course Deadline:</strong> #{course.dropddl}</p>
-    <a href="/coursework?email=#{email}&courseid=#{course.id}">Courseworks</a>
-    <p>     </p>
-    <a href="/post?courseid=#{course.id}">Posts</a>
-    <p>     </p>
-    <a href="/dropcourse?courseid=#{course.id}">Drop #{course.name}, section #{course.section}</a>
 
-    
+
+<body>
+    if user.role === 'S'
+        <a href="/mycourse"><- Go Back</a>
+        <h2>Course Name: #{course.name}</h2>
+        <p><strong>Professor:</strong> #{user.name}</p>
+        <p><strong>Professor Email:</strong> <a href="mailto:#{user.email}">#{user.email}</a></p>
+        <p><strong>Professor Office:</strong> #{user.office}</p>
+        <p><strong>Course Description:</strong> #{course.description}</p>
+        <p><strong>Course Section:</strong> #{course.section}</p>
+        <p><strong>Section Limit:</strong> #{course.limit}</p>
+        <p><strong>Drop Course Deadline:</strong> #{course.dropddl}</p>
+        <a href="/coursework?email=#{email}&courseid=#{course.id}">Courseworks</a>
+        <p>     </p>
+        <a href="/post?courseid=#{course.id}">Posts</a>
+        <p>     </p>
+        <a href="/dropcourse?courseid=#{course.id}">Drop #{course.name}, section #{course.section}</a>
+    else
+        <a href="/mycourse"><- Go Back</a>
+        <h2>Course Name: #{course.name}</h2>
+        <p><strong>Professor:</strong> #{user.name}</p>
+        <p><strong>Professor Email:</strong> <a href="mailto:#{user.email}">#{user.email}</a></p>
+        <p><strong>Professor Office:</strong> #{user.office}</p>
+        <p><strong>Course Description:</strong> #{course.description}</p>
+        <p><strong>Course Section:</strong> #{course.section}</p>
+        <p><strong>Section Limit:</strong> #{course.limit}</p>
+        <p><strong>Drop Course Deadline:</strong> #{course.dropddl}</p>
+        <a href="/managecoursework?courseid=#{course.id}">Manage Courseworks</a>
+        <p>     </p>
+        <a href="/post?courseid=#{course.id}">Posts</a>
+
 </body>

@@ -1,10 +1,42 @@
 <body>
+    <a href="/course?name=#{course.name}&section=#{course.section}"><- Go Back</a>
     each coursework in courseworks
-        <div>
-            <p>Coursework Type: #{coursework.type}</p>
-            <p>Coursework Name: #{coursework.name}</p>
-            <p>Coursework Detail: #{coursework.detail}</p>
-            <p>Coursework Grade: #{coursework.grade}</p>
-            <p>-------------------------------------</p>
-        </div>
+        if user.role === 'S'
+            if coursework.type === 'H'
+                <p>Coursework Type: Homework</p>
+                <p>Coursework Name: #{coursework.name}</p>
+                <p>Coursework Detail: #{coursework.detail}</p>
+                <p>Coursework Grade: #{coursework.grade}</p>
+                <p>-------------------------------------</p>
+            else
+                <p>Coursework Type: Exam</p>
+                <p>Coursework Name: #{coursework.name}</p>
+                <p>Coursework Detail: #{coursework.detail}</p>
+                <p>Coursework Grade: #{coursework.grade}</p>
+                <p>-------------------------------------</p>
+            
+        else
+            if coursework.type === 'H'
+                <p>Coursework Type: Homework</p>
+                <p>Coursework Name: #{coursework.name}</p>
+                <p>Coursework Detail: #{coursework.detail}</p>
+                <p>Coursework Student: #{coursework.student.name}</p>
+                <p>Coursework Grade: #{coursework.grade}</p>
+                <form action="/gradecoursework?courseworkid=#{coursework.id}&courseid=#{course.id}" method="post">
+                    <input type="post" placeholder="Grade This Coursework" name="grade"/>
+                    <button type="submit">Grade</button>
+                </form>
+                <p>-------------------------------------</p> 
+            else 
+                <p>Coursework Type: Exam</p>
+                <p>Coursework Name: #{coursework.name}</p>
+                <p>Coursework Detail: #{coursework.detail}</p>
+                <p>Coursework Student: #{coursework.student.name}</p>
+                <p>Coursework Grade: #{coursework.grade}</p>
+                <form action="/gradecoursework?courseworkid=#{coursework.id}&courseid=#{course.id}" method="post">
+                    <input type="post" placeholder="Grade This Coursework" name="grade"/>
+                    <button type="submit">Grade</button>
+                </form>
+                <p>-------------------------------------</p> 
+        
 </body>
