@@ -9,3 +9,5 @@ used for interaction of course-related information, including all necessary info
 and data relation. Based on application of **ER model**, **relational database** and **SQL**.
 
 All work is done in back-end file.
+
+Contact information: polarisyuanhong@gmail.com
