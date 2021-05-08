@@ -34,7 +34,7 @@
     "morgan": "^1.10.0",
     "pug": "^2.0.4",
     "sqlite3": "^4.1.1",
-    "typeorm": "^0.2.24",
+    "typeorm": "^0.2.25",
     "winston": "^3.2.1"
   },
   "devDependencies": {
